@@ -1,0 +1,36 @@
+---
+title: "Data Modeling"
+author: "Bailey Jørgensen"
+format: html
+editor: visual
+---
+
+My Snow_survey table:
+
+```{sql}
+CREATE TABLE Snow_survey (
+    Survey_id INTEGER PRIMARY KEY, -- Unique identifier for each survey
+    Site TEXT NOT NULL, -- Site code or name (likely linked to Site table as Foreign Key)
+    Year INTEGER NOT NULL CHECK (Year > 1900 AND Year < 2100), -- Year of the survey, with constraints
+    Survey_date DATE NOT NULL, -- Specific survey date
+    Plot TEXT, -- Individual plot ID within the site
+    Location TEXT NOT NULL, -- Description or coordinates of the plot location
+    Snow_cover REAL NOT NULL CHECK (Snow_cover BETWEEN 0 AND 100), -- Percent snow cover (0-100 range)
+    Water_cover REAL CHECK (Water_cover BETWEEN 0 AND 100), -- Percent water cover (0-100 range)
+    Land_cover REAL CHECK (Land_cover BETWEEN 0 AND 100), -- Percent land cover (0-100 range)
+    Total_cover REAL CHECK (Total_cover BETWEEN 0 AND 100), -- Total cover percentage (should equal 100%)
+    Observer TEXT NOT NULL, -- Personnel abbreviation (linked to Personnel table as Foreign Key)
+    Notes TEXT, -- Optional field for survey notes
+    UNIQUE (Site, Survey_date, Plot), -- Ensure no duplicate entries for the same site, date, and plot
+    FOREIGN KEY (Site) REFERENCES Site(Code), -- Link to Site table
+    FOREIGN KEY (Observer) REFERENCES Personnel(Abbreviation) -- Link to Personnel table
+);
+```
+
+Justifications:
+- Survey_id gives each row a unique identifier
+- Year is an integer because it is a series of whole numbers, instead of date format or REAL, which allows decimals 
+- Plot is a column with some NULL values, but I didn't want too many rows to be deleted, and Plot name doesn't seem to be so important that it can't be left out if need be
+- Location, however, seems pretty important, so I did not allow that to be NULL. There is also not that many null values there, so only a few rows (9) would get deleted. 
+- I added foreign keys to link back to the tables provided in the rubric. 
+- I made it so that Snow_cover couldn't be null, since this is a snow survey table. However, I allowed the others to be null, since they are not the primary variables being surveyed.  
