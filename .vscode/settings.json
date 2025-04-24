@@ -1,0 +1,8 @@
+{
+    "typescript.suggest.enabled": false,
+    "editor.suggest.showClasses": false,
+    "editor.suggest.showFunctions": false,
+    "editor.suggest.showKeywords": false,
+    "editor.suggest.showMethods": false,
+    "javascript.suggest.enabled": false
+}

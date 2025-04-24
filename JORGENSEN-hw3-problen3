@@ -1,0 +1,20 @@
+-- Compute the average egg volume per nest
+WITH Averages AS (
+    SELECT Nest_ID, AVG(3.14/6 * Width^2 * Length) AS Avg_volume
+    FROM Bird_eggs
+    GROUP BY Nest_ID -- Makes sure its per nest instead of per egg
+)
+
+-- Find the max average volume for each species and join scientific names
+SELECT Species.Scientific_name, MAX(Averages.Avg_volume) AS Max_avg_volume
+FROM Bird_nests
+JOIN Averages USING (Nest_ID)
+JOIN Species ON Bird_nests.Species = Species.Code -- Match keys!
+GROUP BY Species.Scientific_name
+ORDER BY Max_avg_volume DESC;
+
+/* Yay, this worked to give me the table according to the instructions! 
+The trick was knowing what tables to join on what values, 
+as well as creating the temporary table at the beginning with our 
+equation. Hooray!
+*/
