@@ -1,0 +1,71 @@
+---
+title: "connecting_duckdb"
+format: html
+---
+
+```{r}
+librarian::shelf(tidyverse, DBI, duckdb)
+```
+
+```{r}
+conn <- DBI::dbConnect(duckdb::duckdb(), dbdir="C:/MEDS/EDS-213/bren-eds213-data/database/database.db")
+```
+
+```{r}
+species <- tbl(conn, "Species")
+species
+```
+
+```{r}
+species |> 
+  filter(Relevance == "Study species") |> 
+  select(Code, Scientific_name) |> 
+  show_query()
+```
+```{r}
+species_study <- species |> 
+  filter(Relevance=="Study species") |> 
+  select(Code, Scientific_name)
+```
+
+```{r}
+class(species_study)
+```
+```{r}
+dim(species_study)
+```
+```{r}
+# can i group
+species |> 
+  group_by(Relevance) |> 
+  summarize(num_species = n())
+```
+
+```{r}
+# You can also mutate
+species |> 
+  mutate(Code_x = paste0("X", Code))
+```
+
+```{r}
+# How do we get the full data
+species_x <- species |> 
+  mutate(Code_x = paste0("X", Code)) |> 
+  collect()
+```
+```{r}
+DBI::dbDisconnect(conn, shutdown = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

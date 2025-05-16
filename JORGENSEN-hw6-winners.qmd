@@ -1,0 +1,84 @@
+---
+title: "Homework Week 6 - Winners"
+author: "Bailey Jørgensen"
+format: html
+editor: visual
+---
+
+```{r}
+# Load libraries
+library(duckdb)
+library(dplyr)
+library(dbplyr)
+```
+
+
+```{r}
+# Connect to the duckbd 
+conn <- dbConnect(duckdb::duckdb(), "database/database.db")
+```
+
+
+```{r}
+# Take a look at all the tables available to us
+db_tables <- tbl(conn, sql("SHOW TABLES")) %>% collect()
+print(db_tables)
+```
+```{r}
+bird_nests <- tbl(conn, "bird_nests")
+head(bird_nests)
+```
+
+
+```{r}
+# Load the Bird_eggs table
+bird_eggs <- tbl(conn, "Bird_eggs")
+
+# Take a look at the egg table
+head(bird_eggs)
+```
+```{r}
+# Create personnel table
+personnel_table <- tbl(conn, "Personnel")
+
+# Take a look at the personnel table
+head(personnel_table)
+
+```
+
+## Looking at these rows, I think we need to join the Personnel table (which has the full names and the name abbreviations associated) to the bird_eggs table (which has Egg_num category we need to count the eggs measured). In order to do that though, we also need the bird_egg table, which has the abbreviation name of observer and the nest_id, which can link the two tables together. 
+
+
+```{r}
+# Make the connections
+bird_nests <- tbl(conn, "bird_nests")
+personnel_table <- tbl(conn, "Personnel")
+bird_eggs <- tbl(conn, "Bird_eggs")
+
+# Join tables together into 1
+egg_nest_person <- bird_nests |> 
+  inner_join(bird_eggs, by = "Nest_ID") |> 
+  inner_join(personnel_table, by = c("Observer" = "Abbreviation"))
+
+# Aggregate egg count per observer
+top_observers <- egg_nest_person |> 
+  group_by(Name) |> 
+  summarise(total_eggs = n()) |> 
+  arrange(desc(total_eggs)) |> 
+  head(3)
+
+# Display the final query
+show_query(top_observers)
+
+# Print results
+top_observers
+
+```
+
+## The code above prints out the desired results according to instructions! 
+
+Vanessa Loverti (163)
+Dylan Kessler (87)
+Richard Lanctot (50)
+
+
