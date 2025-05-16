@@ -5,7 +5,7 @@ format: html
 editor: visual
 ---
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 # Load libraries
 library(duckdb)
 library(dplyr)
@@ -67,9 +67,6 @@ top_observers <- egg_nest_person |>
   arrange(desc(total_eggs)) |> 
   head(3)
 
-# Display the final query
-show_query(top_observers)
-
 # Print results
 top_observers
 
@@ -87,4 +84,8 @@ show_query(top_observers)
 ```
 It looks like it did not create a temp table, but managed to do everything in one query. It used LIMIT 3 at the end of the query to limit the results to just the tree top winners. 
 
+```{r}
+# Close the database connection
+dbDisconnect(conn)
+```
 
